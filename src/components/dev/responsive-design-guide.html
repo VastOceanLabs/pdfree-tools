@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDfree.tools - Responsive Design Testing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* === DESIGN TOKENS === */
+        :root {
+            /* Brand Colors */
+            --primary-50: #eff6ff;
+            --primary-100: #dbeafe;
+            --primary-500: #3b82f6;
+            --primary-600: #2563eb;
+            --primary-700: #1d4ed8;
+            --primary-900: #1e3a8a;
+            
+            --success-500: #10b981;
+            --warning-500: #f59e0b;
+            --error-500: #ef4444;
+            
+            /* Neutrals */
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-400: #94a3b8;
+            --gray-500: #64748b;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1e293b;
+            --gray-900: #0f172a;
+            
+            /* Semantic colors */
+            /* Light mode colors (default) */
+            --color-bg-primary: #ffffff;
+            --color-bg-secondary: var(--gray-50);
+            --color-bg-tertiary: var(--gray-100);
+            --color-text-primary: var(--gray-900);
+            --color-text-secondary: var(--gray-600);
+            --color-text-tertiary: var(--gray-500);
+            --color-border-primary: var(--gray-200);
+            --color-border-secondary: var(--gray-300);
+            --color-interactive-primary: var(--primary-600);
+            --color-interactive-primary-hover: var(--primary-700);
+            --color-focus-ring: var(--primary-500);
+            
+            /* Spacing */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 20px;
+            --space-6: 24px;
+            --space-8: 32px;
+            --space-10: 40px;
+            --space-12: 48px;
+            --space-16: 64px;
+            --space-20: 80px;
+            
+            /* Typography */
+            --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-family-mono: ui-monospace, 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'Consolas', monospace;
+            --font-size-xs: 12px;
+            --font-size-sm: 14px;
+            --font-size-base: 16px;
+            --font-size-lg: 18px;
+            --font-size-xl: 20px;
+            --font-size-2xl: 24px;
+            --font-size-3xl: 30px;
+            --font-size-4xl: 36px;
+            
+            --font-weight-normal: 400;
+            --font-weight-medium: 500;
+            --font-weight-semibold: 600;
+            --font-weight-bold: 700;
+            
+            --line-height-tight: 1.25;
+            --line-height-normal: 1.5;
+            --line-height-relaxed: 1.625;
+            
+            /* Border radius */
+            --radius-sm: 4px;
+            --radius-base: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 24px;
+            --radius-full: 9999px;
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-base: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            
+            /* Transitions */
+            --transition-fast: 150ms ease;
+            --transition-base: 200ms ease;
+            --transition-slow: 300ms ease;
+            
+            /* Breakpoints for JS */
+            --breakpoint-sm: 640px;
+            --breakpoint-md: 768px;
+            --breakpoint-lg: 1024px;
+            --breakpoint-xl: 1280px;
+        }
+        
+        /* Dark mode */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg-primary: var(--gray-900);
+                --color-bg-secondary: var(--gray-800);
+                --color-bg-tertiary: var(--gray-700);
+                --color-text-primary: var(--gray-50);
+                --color-text-secondary: var(--gray-300);
+                --color-text-tertiary: var(--gray-400);
+                --color-border-primary: var(--gray-700);
+                --color-border-secondary: var(--gray-600);
+            }
+        }
+        
+        /* === CSS RESET === */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        html {
+            font-size: 100%;
+            -webkit-text-size-adjust: 100%;
+            -moz-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            scroll-behavior: smooth;
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+        
+        body {
+            font-family: var(--font-family-sans);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-normal);
+            line-height: var(--line-height-normal);
+            color: var(--color-text-primary);
+            background-color: var(--color-bg-primary);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        /* === UTILITY CLASSES === */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-4);
+        }
+        
+        @media (min-width: 640px) {
+            .container {
+                padding: 0 var(--space-6);
+            }
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-3) var(--space-6);
+            font-size: var(--font-size-base);
+            font-weight: var(--font-weight-medium);
+            line-height: 1;
+            border: 1px solid transparent;
+            border-radius: var(--radius-base);
+            text-decoration: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            min-height: 48px; /* Accessibility requirement */
+            min-width: 48px;
+            touch-action: manipulation;
+        }
+        
+        .btn-primary {
+            background-color: var(--color-interactive-primary);
+            color: white;
+            border-color: var(--color-interactive-primary);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--color-interactive-primary-hover);
+            border-color: var(--color-interactive-primary-hover);
+        }
+        
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--color-text-primary);
+            border-color: var(--color-border-primary);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--color-bg-secondary);
+        }
+        
+        .btn:focus {
+            outline: 2px solid var(--color-focus-ring);
+            outline-offset: 2px;
+        }
+        
+        /* === GRID SYSTEM === */
+        .grid {
+            display: grid;
+            gap: var(--space-4);
+        }
+        
+        /* Mobile: 1 column */
+        .grid-tools {
+            grid-template-columns: 1fr;
+            gap: var(--space-6);
+        }
+        
+        /* Small screens: 2 columns */
+        @media (min-width: 480px) {
+            .grid-tools {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Tablet: 3 columns */
+        @media (min-width: 768px) {
+            .grid-tools {
+                grid-template-columns: repeat(3, 1fr);
+                gap: var(--space-8);
+            }
+        }
+        
+        /* Desktop: 4 columns for better spacing */
+        @media (min-width: 1024px) {
+            .grid-tools {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        
+        /* === TOOL CARD COMPONENT === */
+        .tool-card {
+            background-color: var(--color-bg-primary);
+            border: 1px solid var(--color-border-primary);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            text-align: center;
+            transition: all var(--transition-base);
+            cursor: pointer;
+            min-height: 200px; /* Consistent card height */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .tool-card:hover {
+            border-color: var(--color-interactive-primary);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+        
+        .tool-card:focus {
+            outline: 2px solid var(--color-focus-ring);
+            outline-offset: 2px;
+        }
+        
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            margin-bottom: var(--space-4);
+            background-color: var(--primary-100);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .tool-title {
+            font-size: var(--font-size-lg);
+            font-weight: var(--font-weight-semibold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-2);
+        }
+        
+        .tool-description {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            line-height: var(--line-height-relaxed);
+        }
+        
+        /* === RESPONSIVE BREAKPOINT INDICATOR === */
+        .breakpoint-indicator {
+            position: fixed;
+            top: var(--space-4);
+            right: var(--space-4);
+            background-color: var(--color-interactive-primary);
+            color: white;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+            z-index: 1000;
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .breakpoint-indicator::before {
+            content: 'Mobile';
+        }
+        
+        @media (min-width: 480px) {
+            .breakpoint-indicator::before {
+                content: 'Mobile L';
+            }
+        }
+        
+        @media (min-width: 640px) {
+            .breakpoint-indicator::before {
+                content: 'Small';
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .breakpoint-indicator::before {
+                content: 'Tablet';
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .breakpoint-indicator::before {
+                content: 'Desktop';
+            }
+        }
+        
+        @media (min-width: 1280px) {
+            .breakpoint-indicator::before {
+                content: 'Large';
+            }
+        }
+        
+        /* === TOUCH TARGET TESTING === */
+        .touch-test {
+            margin-top: var(--space-16);
+            padding: var(--space-8);
+            background-color: var(--color-bg-secondary);
+            border-radius: var(--radius-lg);
+        }
+        
+        .touch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+            gap: var(--space-2);
+            margin-top: var(--space-6);
+        }
+        
+        .touch-target {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 48px;
+            min-width: 48px;
+            background-color: var(--color-interactive-primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-base);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            touch-action: manipulation;
+        }
+        
+        .touch-target:hover {
+            background-color: var(--color-interactive-primary-hover);
+            transform: scale(1.05);
+        }
+        
+        .touch-target:focus {
+            outline: 2px solid var(--color-focus-ring);
+            outline-offset: 2px;
+        }
+        
+        .touch-target.small {
+            min-height: 32px;
+            min-width: 32px;
+            background-color: var(--error-500);
+        }
+        
+        .touch-target.large {
+            min-height: 56px;
+            min-width: 56px;
+            background-color: var(--success-500);
+        }
+        
+        /* === HEADER === */
+        .header {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid var(--color-border-primary);
+            padding: var(--space-4) 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .header {
+                background-color: rgba(15, 23, 42, 0.8);
+            }
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .logo {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-interactive-primary);
+            text-decoration: none;
+        }
+        
+        .badge {
+            background-color: var(--success-500);
+            color: white;
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: var(--font-size-xs);
+            font-weight: var(--font-weight-medium);
+            margin-left: var(--space-3);
+        }
+        
+        /* === MAIN CONTENT === */
+        .main {
+            padding: var(--space-8) 0;
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: var(--space-16);
+        }
+        
+        .hero h1 {
+            font-size: var(--font-size-3xl);
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text-primary);
+            margin-bottom: var(--space-4);
+        }
+        
+        @media (min-width: 768px) {
+            .hero h1 {
+                font-size: var(--font-size-4xl);
+            }
+        }
+        
+        .hero p {
+            font-size: var(--font-size-lg);
+            color: var(--color-text-secondary);
+            max-width: 600px;
+            margin: 0 auto var(--space-8);
+        }
+        
+        /* === RESPONSIVE LAYOUT DEMO === */
+        .layout-demo {
+            margin-top: var(--space-16);
+            padding: var(--space-8);
+            background-color: var(--color-bg-tertiary);
+            border-radius: var(--radius-lg);
+        }
+        
+        .demo-grid {
+            display: grid;
+            gap: var(--space-4);
+            grid-template-columns: 1fr;
+        }
+        
+        @media (min-width: 768px) {
+            .demo-grid {
+                grid-template-columns: 2fr 1fr;
+                gap: var(--space-8);
+            }
+        }
+        
+        .demo-content {
+            background-color: var(--color-bg-primary);
+            padding: var(--space-6);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-border-primary);
+        }
+        
+        .demo-sidebar {
+            background-color: var(--color-bg-secondary);
+            padding: var(--space-6);
+            border-radius: var(--radius-base);
+            border: 1px solid var(--color-border-primary);
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-tertiary);
+            font-size: var(--font-size-sm);
+        }
+        
+        /* === AD PLACEHOLDER (STRATEGIC PLACEMENT) === */
+        .sponsor-banner {
+            margin: var(--space-8) 0;
+            min-height: 90px;
+            background-color: var(--color-bg-tertiary);
+            border: 1px solid var(--color-border-primary);
+            border-radius: var(--radius-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-tertiary);
+            font-size: var(--font-size-sm);
+        }
+        
+        @media (max-width: 767px) {
+            .sponsor-banner {
+                min-height: 50px;
+            }
+        }
+        
+        /* Font family override for code display */
+        .font-mono, #performance-metrics {
+            font-family: var(--font-family-mono);
+        }
+        
+        /* Demo sidebar responsive hiding */
+        @media (max-width: 767px) {
+            .demo-sidebar {
+                display: none;
+            }
+        }
+        
+        /* Skip link accessibility fix */
+        .sr-only {
+            position: absolute !important;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip-path: inset(50%);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        .sr-only:focus {
+            position: static !important;
+            width: auto;
+            height: auto;
+            margin: 0;
+            clip-path: none;
+            white-space: normal;
+            padding: var(--space-2) var(--space-3);
+            background: var(--color-bg-tertiary);
+            outline: 2px solid var(--color-focus-ring);
+            border-radius: var(--radius-base);
+            z-index: 1000;
+        }
+        
+        /* Data-theme based dark mode for reliable toggling */
+        [data-theme="dark"] {
+            --color-bg-primary: var(--gray-900);
+            --color-bg-secondary: var(--gray-800);
+            --color-bg-tertiary: var(--gray-700);
+            --color-text-primary: var(--gray-50);
+            --color-text-secondary: var(--gray-300);
+            --color-text-tertiary: var(--gray-400);
+            --color-border-primary: var(--gray-700);
+            --color-border-secondary: var(--gray-600);
+        }
+        
+        [data-theme="dark"] .header {
+            background-color: rgba(15, 23, 42, 0.8);
+        }
+        
+        /* High contrast improvements for testing */
+        @media (prefers-contrast: high) {
+            .tool-card {
+                border-width: 2px;
+            }
+            
+            .btn {
+                border-width: 2px;
+                font-weight: var(--font-weight-semibold);
+            }
+            
+            .touch-target {
+                border: 2px solid transparent;
+            }
+            
+            .touch-target:focus {
+                border-color: white;
+            }
+        }
+        
+        /* Print styles for documentation */
+        @media print {
+            .breakpoint-indicator,
+            .touch-test,
+            .sponsor-banner {
+                display: none;
+            }
+            
+            .tool-card {
+                break-inside: avoid;
+                border: 2px solid black;
+            }
+            
+            * {
+                color: black !important;
+                background: white !important;
+            }
+        }
+        
+        /* Focus visible for modern browsers */
+        .tool-card:focus-visible,
+        .btn:focus-visible,
+        .touch-target:focus-visible {
+            outline: 2px solid var(--color-focus-ring);
+            outline-offset: 2px;
+        }
+        
+        /* Remove focus outline for mouse users */
+        .tool-card:focus:not(:focus-visible),
+        .btn:focus:not(:focus-visible),
+        .touch-target:focus:not(:focus-visible) {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip link for accessibility -->
+    <a href="#main" class="sr-only">Skip to main content</a>
+    
+    <!-- Breakpoint indicator for testing -->
+    <div class="breakpoint-indicator" aria-hidden="true"></div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">
+                    PDfree.tools
+                    <span class="badge">100% Free</span>
+                </a>
+                <nav>
+                    <button class="btn btn-secondary" aria-expanded="false" aria-controls="site-nav">Menu</button>
+                    <nav id="site-nav" hidden style="display: none;">
+                        <!-- Navigation items would go here -->
+                    </nav>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main content -->
+    <main id="main" class="main">
+        <div class="container">
+            <!-- Hero section -->
+            <section class="hero">
+                <h1>Free PDF Tools - No Email Required</h1>
+                <p>
+                    Professional PDF tools that work entirely in your browser. 
+                    No registration, no limits, complete privacy.
+                </p>
+                <div>
+                    <button class="btn btn-primary">Get Started</button>
+                    <button class="btn btn-secondary" style="margin-left: 1rem;">Learn More</button>
+                </div>
+            </section>
+            
+            <!-- Strategic ad placement -->
+            <div class="sponsor-banner">
+                📢 Sponsor Banner (728x90 desktop, 320x50 mobile)
+            </div>
+            
+            <!-- Tools grid -->
+            <section>
+                <h2 style="text-align: center; margin-bottom: 3rem; font-size: var(--font-size-2xl); font-weight: var(--font-weight-semibold);">
+                    PDF Tools
+                </h2>
+                
+                <div class="grid grid-tools">
+                    <a href="javascript:void(0)" class="tool-card">
+                        <div class="tool-icon">📄</div>
+                        <h3 class="tool-title">Merge PDFs</h3>
+                        <p class="tool-description">Combine multiple PDF files into one document quickly and easily.</p>
+                    </a>
+                    
+                    <a href="javascript:void(0)" class="tool-card">
+                        <div class="tool-icon">✂️</div>
+                        <h3 class="tool-title">Split PDF</h3>
+                        <p class="tool-description">Extract pages or split your PDF into separate files.</p>
+                    </a>
+                    
+                    <a href="javascript:void(0)" class="tool-card">
+                        <div class="tool-icon">🔄</div>
+                        <h3 class="tool-title">Rotate PDF</h3>
+                        <p class="tool-description">Rotate pages in your PDF document to the correct orientation.</p>
+                    </a>
+                    
+                    <a href="javascript:void(0)" class="tool-card">
+                        <div class="tool-icon">🗜️</div>
+                        <h3 class="tool-title">Compress PDF</h3>
+                        <p class="tool-description">Reduce PDF file size while maintaining quality.</p>
+                    </a>
+                    
+                    <a href="javascript:void(0)" class="tool-card">
+                        <div class="tool-icon">🖼️</div>
+                        <h3 class="tool-title">JPG to PDF</h3>
+                        <p class="tool-description">Convert JPEG images to PDF format instantly.</p>
+                    </a>
+                    
+                    <a href="javascript:void(0)" class="tool-card">
+                        <div class="tool-icon">📷</div>
+                        <h3 class="tool-title">PDF to JPG</h3>
+                        <p class="tool-description">Extract images from PDF or convert pages to JPG.</p>
+                    </a>
+                    
+                    <a href="javascript:void(0)" class="tool-card">
+                        <div class="tool-icon">🔒</div>
+                        <h3 class="tool-title">Protect PDF</h3>
+                        <p class="tool-description">Add password protection to secure your PDF documents.</p>
+                    </a>
+                </div>
+            </section>
+            
+            <!-- Touch target testing section -->
+            <section class="touch-test">
+                <h2 style="font-size: var(--font-size-xl); margin-bottom: var(--space-4);">
+                    Touch Target Testing
+                </h2>
+                <p style="color: var(--color-text-secondary); margin-bottom: var(--space-6);">
+                    Testing different button sizes for accessibility compliance. 
+                    Green = 56px+ (excellent), Blue = 48px+ (WCAG compliant), Red = 32px (too small).
+                </p>
+                
+                <div class="touch-grid">
+                    <button class="touch-target small">32px</button>
+                    <button class="touch-target small">Too Small</button>
+                    <button class="touch-target">48px</button>
+                    <button class="touch-target">WCAG OK</button>
+                    <button class="touch-target">Standard</button>
+                    <button class="touch-target large">56px</button>
+                    <button class="touch-target large">Excellent</button>
+                    <button class="touch-target large">Thumb</button>
+                </div>
+            </section>
+            
+            <!-- Layout demonstration -->
+            <section class="layout-demo">
+                <h2 style="font-size: var(--font-size-xl); margin-bottom: var(--space-6);">
+                    Responsive Layout Demo
+                </h2>
+                
+                <div class="demo-grid">
+                    <div class="demo-content">
+                        <h3 style="margin-bottom: var(--space-4);">Main Content Area</h3>
+                        <p style="margin-bottom: var(--space-4);">
+                            On mobile, this content stacks vertically for optimal readability. 
+                            On tablet and desktop, it uses a sidebar layout for better space utilization.
+                        </p>
+                        <p>
+                            The grid automatically adjusts from 1 column (mobile) → 2 columns (480px+) → 
+                            3 columns (tablet) → 4 columns (desktop) for the tools section.
+                        </p>
+                    </div>
+                    
+                    <div class="demo-sidebar">
+                        <span>Sidebar Area<br>(Hidden on mobile)</span>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <!-- Accessibility testing script -->
+    <script>
+        // Add keyboard navigation testing
+        document.addEventListener('DOMContentLoaded', function() {
+            // Focus management for tool cards
+            const toolCards = document.querySelectorAll('.tool-card');
+            toolCards.forEach(card => {
+                card.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        // For demo purposes - in real app, would navigate to tool page
+                        console.log(`Navigating to: ${this.querySelector('.tool-title').textContent}`);
+                        alert(`Would open: ${this.querySelector('.tool-title').textContent}`);
+                    }
+                });
+            });
+            
+            // Touch target size validation
+            const touchTargets = document.querySelectorAll('.touch-target');
+            touchTargets.forEach(target => {
+                target.addEventListener('click', function() {
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.min(rect.width, rect.height);
+                    
+                    let message;
+                    if (size >= 56) {
+                        message = `✅ Excellent: ${Math.round(size)}px (Recommended 56px+)`;
+                    } else if (size >= 48) {
+                        message = `✓ Good: ${Math.round(size)}px (WCAG 2.2 compliant)`;
+                    } else {
+                        message = `❌ Too small: ${Math.round(size)}px (Needs 48px minimum)`;
+                    }
+                    
+                    alert(message);
+                });
+            });
+            
+            // Viewport size logging for testing
+            function logViewportInfo() {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                console.log(`Viewport: ${width}x${height}px`);
+                
+                // Check current breakpoint
+                let breakpoint = 'mobile';
+                if (width >= 1280) breakpoint = 'xl';
+                else if (width >= 1024) breakpoint = 'lg';
+                else if (width >= 768) breakpoint = 'md';
+                else if (width >= 640) breakpoint = 'sm';
+                else if (width >= 480) breakpoint = 'mobile-l';
+                
+                console.log(`Current breakpoint: ${breakpoint}`);
+            }
+            
+            // Log on load and resize
+            logViewportInfo();
+            window.addEventListener('resize', logViewportInfo);
+            
+            // Test Core Web Vitals impact
+            const observer = new PerformanceObserver((list) => {
+                for (const entry of list.getEntries()) {
+                    if (entry.entryType === 'layout-shift') {
+                        console.log('Layout Shift detected:', entry.value);
+                        if (entry.value > 0.1) {
+                            console.warn('⚠️ Layout shift above threshold (0.1)');
+                        }
+                    }
+                }
+            });
+            
+            try {
+                observer.observe({entryTypes: ['layout-shift']});
+            } catch (e) {
+                console.log('Layout shift monitoring not supported');
+            }
+            
+            // Performance monitoring and display
+            function updatePerformanceMetrics() {
+                const metrics = {
+                    'Viewport Width': `${window.innerWidth}px`,
+                    'Viewport Height': `${window.innerHeight}px`,
+                    'Device Pixel Ratio': window.devicePixelRatio || 'Unknown',
+                    'User Agent': navigator.userAgent.includes('Mobile') ? 'Mobile Device' : 'Desktop Device',
+                    'Touch Support': 'ontouchstart' in window ? 'Yes' : 'No',
+                    'Color Scheme': window.matchMedia('(prefers-color-scheme: dark)').matches ? 'Dark' : 'Light'
+                };
+                
+                // Calculate current grid columns
+                const toolGrid = document.querySelector('.grid-tools');
+                if (toolGrid) {
+                    const gridCols = window.getComputedStyle(toolGrid).gridTemplateColumns.split(' ').length;
+                    metrics['Grid Columns'] = `${gridCols} columns`;
+                }
+                
+                <!-- Performance timing */
+                if (performance.getEntriesByType) {
+                    const nav = performance.getEntriesByType('navigation')[0];
+                    if (nav && nav.loadEventEnd) {
+                        metrics['Page Load Time'] = `${Math.round(nav.loadEventEnd)}ms`;
+                    }
+                } else if (performance.timing) {
+                    // Fallback for older browsers
+                    const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+                    metrics['Page Load Time'] = `${loadTime}ms`;
+                }
+                
+                // Memory usage (if available)
+                if (performance.memory) {
+                    const memoryMB = Math.round(performance.memory.usedJSHeapSize / 1024 / 1024);
+                    metrics['Memory Usage'] = `${memoryMB}MB`;
+                }
+                
+                const metricsEl = document.getElementById('performance-metrics');
+                if (metricsEl) {
+                    metricsEl.innerHTML = Object.entries(metrics)
+                        .map(([key, value]) => `<div>${key}: <strong>${value}</strong></div>`)
+                        .join('');
+                }
+            }
+            
+            // Update metrics on load and resize
+            updatePerformanceMetrics();
+            announceBreakpoint(); // Initial announcement
+            window.addEventListener('resize', updatePerformanceMetrics);
+            
+            // Announce breakpoint changes to screen readers
+            let currentBreakpoint = '';
+            function announceBreakpoint() {
+                const width = window.innerWidth;
+                let newBreakpoint = 'mobile';
+                
+                if (width >= 1280) newBreakpoint = 'extra large desktop';
+                else if (width >= 1024) newBreakpoint = 'desktop';
+                else if (width >= 768) newBreakpoint = 'tablet';
+                else if (width >= 640) newBreakpoint = 'small tablet';
+                else if (width >= 480) newBreakpoint = 'large mobile';
+                
+                if (newBreakpoint !== currentBreakpoint) {
+                    currentBreakpoint = newBreakpoint;
+                    const announcement = document.getElementById('announcements');
+                    if (announcement) {
+                        announcement.textContent = `Layout changed to ${newBreakpoint} view`;
+                    }
+                }
+            }
+            
+            // Debounced resize handler for announcements
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(announceBreakpoint, 300);
+            });
+        });
+        
+        // Dark mode toggle for testing (using Ctrl+Shift+L to avoid browser conflicts)
+        function toggleDarkMode() {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+        }
+        
+        // Add dark mode toggle on Ctrl+Shift+L key press (avoiding Ctrl+D bookmark conflict)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'L' && e.ctrlKey && e.shiftKey) {
+                e.preventDefault();
+                toggleDarkMode();
+            }
+        });
+    </script>
+</body>
+</html>

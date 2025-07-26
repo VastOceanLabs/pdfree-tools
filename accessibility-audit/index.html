@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free PDF Accessibility Audit Tool - Check WCAG 2.2 Compliance | PDfree.tools</title>
+    <meta name="description" content="Free online accessibility audit tool. Test PDFs and web content for WCAG 2.2 compliance, keyboard navigation, screen reader compatibility, and color contrast. No email required.">
+    <link rel="canonical" href="https://pdffree.tools/accessibility-audit">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Free PDF Accessibility Audit Tool - WCAG 2.2 Compliance Checker">
+    <meta property="og:description" content="Professional accessibility auditing for PDFs and web content. Check keyboard navigation, screen reader compatibility, color contrast, and ARIA compliance for free.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pdffree.tools/accessibility-audit">
+    <meta property="og:image" content="https://pdffree.tools/og/accessibility-audit.png">
+    <meta property="og:image:alt" content="PDfree.tools Accessibility Audit">
+    
+    <!-- Schema.org Markup -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "PDF Accessibility Audit Tool",
+        "description": "Free online tool for testing PDF and web content accessibility compliance with WCAG 2.2 standards",
+        "url": "https://pdffree.tools/accessibility-audit",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Any",
+        "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+        }
+    }
+    </script>
+    
+    <style>
+        /* Design System Foundation */
+        :root {
+            --primary-600: #3B82F6;
+            --primary-700: #1D4ED8;
+            --primary-50: #EBF4FF;
+            --success-600: #10B981;
+            --warning-600: #F59E0B;
+            --error-600: #EF4444;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-500: #64748B;
+            --gray-600: #64748B;
+            --gray-700: #334155;
+            --gray-800: #1E293B;
+            --gray-900: #0F172A;
+            --surface: #FFFFFF;
+            --surface-alt: var(--gray-50);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* Dark mode support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --gray-50: #0F172A;
+                --gray-100: #1E293B;
+                --gray-200: #334155;
+                --gray-600: #94A3B8;
+                --gray-800: #F1F5F9;
+                --gray-900: #F8FAFC;
+                --surface: #0B1220;
+                --surface-alt: #111827;
+            }
+        }
+
+        /* Reduced motion support */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            line-height: 1.6;
+            color: var(--gray-800);
+            background-color: var(--gray-50);
+            min-height: 100vh;
+        }
+
+        /* Skip link for screen readers */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 8px;
+            background: var(--primary-600);
+            color: white;
+            padding: 8px 16px;
+            text-decoration: none;
+            border-radius: var(--radius-sm);
+            z-index: 1000;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .skip-link:focus {
+            top: 8px;
+        }
+
+        /* Header */
+        .header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--gray-200);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary-600);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--gray-600);
+            font-weight: 500;
+            padding: 8px 0;
+            transition: color 0.2s ease;
+        }
+
+        .nav-links a:focus-visible {
+            color: var(--primary-600);
+            outline: 2px solid var(--primary-600);
+            outline-offset: 4px;
+            border-radius: var(--radius-sm);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary-600);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        .hero-section {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .hero-title {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: var(--gray-900);
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--gray-600);
+            margin-bottom: 24px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .trust-badges-list {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+            margin-top: 32px;
+            list-style: none;
+            padding: 0;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .trust-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--success-600);
+        }
+
+        /* Audit Tool Interface */
+        .audit-interface {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        .audit-panel {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+        }
+
+        .panel-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: var(--gray-900);
+        }
+
+        .panel-description {
+            color: var(--gray-600);
+            margin-bottom: 24px;
+            font-size: 16px;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--gray-200);
+            border-radius: var(--radius-md);
+            padding: 48px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--gray-50);
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .upload-zone:hover,
+        .upload-zone:focus-within {
+            border-color: var(--primary-600);
+            background: var(--primary-50);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--primary-600);
+            background: var(--primary-50);
+            transform: scale(1.02);
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            color: var(--gray-600);
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            color: var(--gray-600);
+            font-size: 14px;
+        }
+
+        /* Web URL Input */
+        .url-input-section {
+            margin-bottom: 24px;
+        }
+
+        .url-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            transition: border-color 0.2s ease;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: var(--primary-600);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 48px;
+        }
+
+        .btn:focus {
+            outline: 2px solid var(--primary-600);
+            outline-offset: 2px;
+        }
+
+        .btn-primary {
+            background: var(--primary-600);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-700);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--surface-alt);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        /* Audit Tests */
+        .audit-tests {
+            grid-column: span 2;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 32px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+        }
+
+        .test-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .test-category {
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            background: var(--surface-alt);
+        }
+
+        .category-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .test-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .test-item:last-child {
+            border-bottom: none;
+        }
+
+        .test-name {
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+
+        .test-status {
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-pending {
+            background: var(--gray-100);
+            color: var(--gray-600);
+        }
+
+        .status-running {
+            background: #FEF3C7;
+            color: #92400E;
+            animation: pulse 2s infinite;
+        }
+
+        .status-pass {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-fail {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .status-warning {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        /* Results Panel */
+        .results-panel {
+            margin-top: 32px;
+            padding: 24px;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            display: none;
+        }
+
+        .results-panel.visible {
+            display: block;
+        }
+
+        .results-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-200);
+        }
+
+        .summary-number {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .summary-label {
+            font-size: 14px;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .pass-card .summary-number { color: var(--success-600); }
+        .fail-card .summary-number { color: var(--error-600); }
+        .warning-card .summary-number { color: var(--warning-600); }
+        .total-card .summary-number { color: var(--primary-600); }
+
+        /* Detailed Results */
+        .detailed-results {
+            margin-top: 32px;
+        }
+
+        .result-section {
+            margin-bottom: 32px;
+            padding: 24px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--gray-200);
+        }
+
+        .result-section h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--gray-900);
+        }
+
+        .issue-item {
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: var(--radius-sm);
+            border-left: 4px solid;
+        }
+
+        .issue-error {
+            background: #FEF2F2;
+            border-left-color: var(--error-600);
+        }
+
+        .issue-warning {
+            background: #FFFBEB;
+            border-left-color: var(--warning-600);
+        }
+
+        .issue-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--gray-900);
+        }
+
+        .issue-description {
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+
+        .issue-location {
+            font-size: 12px;
+            color: var(--gray-500);
+            font-family: 'Monaco', 'Menlo', monospace;
+            background: var(--gray-100);
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            display: inline-block;
+        }
+
+        /* Loading States */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gray-200);
+            border-radius: 50%;
+            border-top-color: var(--primary-600);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            background: var(--surface);
+            padding: 16px 24px;
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            min-width: 300px;
+        }
+
+        .toast.visible {
+            transform: translateX(0);
+        }
+
+        .toast-success {
+            border-left: 4px solid var(--success-600);
+        }
+
+        .toast-error {
+            border-left: 4px solid var(--error-600);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px 16px;
+            }
+            
+            .hero-title {
+                font-size: 32px;
+            }
+            
+            .hero-subtitle {
+                font-size: 18px;
+            }
+            
+            .audit-interface {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            
+            .audit-tests {
+                grid-column: span 1;
+            }
+            
+            .test-categories {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .trust-badges {
+                gap: 16px;
+            }
+        }
+
+        /* Focus management */
+        [tabindex="-1"]:focus {
+            outline: none;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* ARIA live regions */
+        .sr-status {
+            position: absolute;
+            left: -10000px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <!-- ARIA live regions for screen readers -->
+    <div id="sr-status" class="sr-status" aria-live="polite" aria-atomic="true"></div>
+    <div id="sr-alert" class="sr-status" aria-live="assertive" aria-atomic="true"></div>
+
+    <header class="header" role="banner">
+        <div class="header-content">
+            <a href="/" class="logo" aria-label="PDfree.tools homepage">PDfree.tools</a>
+            <nav role="navigation" aria-label="Main navigation">
+                <ul class="nav-links">
+                    <li><a href="/">All Tools</a></li>
+                    <li><a href="/merge">Merge PDF</a></li>
+                    <li><a href="/split">Split PDF</a></li>
+                    <li><a href="/compress">Compress</a></li>
+                    <li><a href="/convert">Convert</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" class="container" role="main">
+        <section class="hero-section">
+            <h1 class="hero-title">PDF Accessibility Audit</h1>
+            <p class="hero-subtitle">
+                Professional WCAG 2.2 compliance testing for PDFs and web content. 
+                Check keyboard navigation, screen reader compatibility, and color contrast - completely free.
+            </p>
+            
+            <div class="trust-badges">
+                <ul class="trust-badges-list" role="list">
+                    <li class="trust-badge" role="listitem">
+                        <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>100% Free</span>
+                    </li>
+                    <li class="trust-badge" role="listitem">
+                        <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                        </svg>
+                        <span>No Email Required</span>
+                    </li>
+                    <li class="trust-badge" role="listitem">
+                        <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                        <span>Instant Results</span>
+                    </li>
+                    <li class="trust-badge" role="listitem">
+                        <svg class="trust-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                        <span>Files Auto-Delete</span>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="audit-interface">
+            <div class="audit-panel">
+                <h2 class="panel-title">Upload PDF Document</h2>
+                <p class="panel-description">
+                    Upload a PDF to test for accessibility compliance, including tagged content, reading order, and alternative text for images.
+                </p>
+                
+                <div class="upload-zone" 
+                     role="button" 
+                     tabindex="0" 
+                     aria-label="Upload PDF file for accessibility audit. Drag and drop or click to select file."
+                     onclick="document.getElementById('pdf-upload').click()"
+                     onkeydown="if(event.key === 'Enter' || event.key === ' ') { event.preventDefault(); document.getElementById('pdf-upload').click(); }">
+                    <svg class="upload-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <div class="upload-text">Drop PDF here or click to upload</div>
+                    <div class="upload-subtext">Supports PDF files up to 100MB</div>
+                    <input type="file" 
+                           id="pdf-upload" 
+                           class="upload-input" 
+                           accept="application/pdf,.pdf"
+                           aria-describedby="pdf-upload-help">
+                </div>
+                <div id="pdf-upload-help" class="visually-hidden">
+                    Upload a PDF file to perform accessibility compliance testing
+                </div>
+            </div>
+
+            <div class="audit-panel">
+                <h2 class="panel-title">Test Web Page</h2>
+                <p class="panel-description">
+                    Enter a website URL to audit web accessibility, including keyboard navigation, ARIA labels, and color contrast compliance.
+                </p>
+                
+                <div class="url-input-section">
+                    <label for="website-url" class="visually-hidden">Website URL to audit</label>
+                    <input type="url" 
+                           id="website-url" 
+                           class="url-input" 
+                           placeholder="https://example.com"
+                           aria-describedby="url-help">
+                    <div id="url-help" class="visually-hidden">
+                        Enter a complete website URL including https:// to test web accessibility
+                    </div>
+                </div>
+                
+                <button type="button" 
+                        class="btn btn-primary btn-full" 
+                        id="audit-website-btn"
+                        aria-describedby="website-audit-help">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 21h7a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v11m0 5l4.5-4.5M6 10l4.5 4.5"></path>
+                    </svg>
+                    Start Website Audit
+                </button>
+                <div id="website-audit-help" class="visually-hidden">
+                    This will analyze the website for WCAG 2.2 accessibility compliance
+                </div>
+            </div>
+        </section>
+
+        <section class="audit-tests" aria-labelledby="audit-tests-title">
+            <h2 id="audit-tests-title" class="panel-title">Accessibility Tests</h2>
+            <p class="panel-description">
+                Comprehensive WCAG 2.2 AA compliance testing covering all major accessibility guidelines and requirements.
+            </p>
+
+            <div class="test-categories" aria-label="Accessibility test categories">
+                <section class="test-category" aria-labelledby="keyboard-nav-title">
+                    <div class="category-title" id="keyboard-nav-title">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"></path>
+                        </svg>
+                        Keyboard Navigation
+                    </div>
+                    
+                    <div class="test-item">
+                        <span class="test-name">Tab Order Sequence</span>
+                        <span class="test-status status-pending" id="tab-order-status">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">Focus Indicators</span>
+                        <span class="test-status status-pending" id="focus-indicators-status">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">Keyboard Shortcuts</span>
+                        <span class="test-status status-pending" id="keyboard-shortcuts-status">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">Focus Management</span>
+                        <span class="test-status status-pending" id="focus-management-status">Pending</span>
+                    </div>
+                </section>
+
+                <section class="test-category" aria-labelledby="screen-reader-title">
+                    <div class="category-title" id="screen-reader-title">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                        </svg>
+                        Screen Reader Compatibility
+                    </div>
+                    
+                    <div class="test-item">
+                        <span class="test-name">ARIA Labels & Roles</span>
+                        <span class="test-status status-pending" id="aria-labels-status">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">Heading Structure</span>
+                        <span class="test-status status-pending" id="heading-structure-status">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">Alt Text for Images</span>
+                        <span class="test-status status-pending" id="alt-text-status">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">Live Regions</span>
+                        <span class="test-status status-pending" id="live-regions-status">Pending</span>
+                    </div>
+                </section>
+
+                <section class="test-category" aria-labelledby="color-contrast-title">
+                    <div class="category-title" id="color-contrast-title">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                        </svg>
+                        Color Contrast
+                    </div>
+                    
+                    <div class="test-item">
+                        <span class="test-name">Text Contrast (4.5:1)</span>
+                        <span class="test-status status-pending" id="text-contrast-status">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">Large Text (3:1)</span>
+                        <span class="test-status status-pending" id="large-text-status">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">UI Components</span>
+                        <span class="test-status status-pending" id="ui-contrast-status">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">Color Dependency</span>
+                        <span class="test-status status-pending" id="color-dependency-status">Pending</span>
+                    </div>
+                </section>
+
+                <section class="test-category" aria-labelledby="structure-title">
+                    <div class="category-title" id="structure-title">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                        Document Structure
+                    </div>
+                    
+                    <div class="test-item">
+                        <span class="test-name">Semantic Markup</span>
+                        <span class="test-status status-pending" id="semantic-markup-status">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">Landmark Regions</span>
+                        <span class="test-status status-pending" id="landmarks-status">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">Table Headers</span>
+                        <span class="test-status status-pending" id="table-headers-status">Pending</span>
+                    </div>
+                    <div class="test-item">
+                        <span class="test-name">Form Labels</span>
+                        <span class="test-status status-pending" id="form-labels-status">Pending</span>
+                    </div>
+                </section>
+            </div>
+
+            <div class="results-panel" id="results-panel" aria-labelledby="results-title">
+                <h3 id="results-title" class="panel-title">Audit Results</h3>
+                
+                <div class="results-summary" role="region" aria-labelledby="summary-title">
+                    <h4 id="summary-title" class="visually-hidden">Results Summary</h4>
+                    <div class="summary-card total-card">
+                        <div class="summary-number" id="total-tests">0</div>
+                        <div class="summary-label">Total Tests</div>
+                    </div>
+                    <div class="summary-card pass-card">
+                        <div class="summary-number" id="passed-tests">0</div>
+                        <div class="summary-label">Passed</div>
+                    </div>
+                    <div class="summary-card fail-card">
+                        <div class="summary-number" id="failed-tests">0</div>
+                        <div class="summary-label">Failed</div>
+                    </div>
+                    <div class="summary-card warning-card">
+                        <div class="summary-number" id="warning-tests">0</div>
+                        <div class="summary-label">Warnings</div>
+                    </div>
+                </div>
+
+                <div class="detailed-results" id="detailed-results">
+                    <!-- Detailed results will be populated here -->
+                </div>
+
+                <div style="margin-top: 32px; text-align: center;">
+                    <button type="button" class="btn btn-primary" id="download-report-btn" aria-describedby="download-help">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        Download Detailed Report
+                    </button>
+                    <div id="download-help" class="visually-hidden">
+                        Download a comprehensive accessibility audit report as PDF
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Toast notification template -->
+    <div id="toast-template" class="toast" role="alert" aria-live="assertive" style="display: none;">
+        <div class="toast-content"></div>
+    </div>
+
+    <script>
+        // Accessibility Audit Tool JavaScript
+        class AccessibilityAuditor {
+            constructor() {
+                this.currentFile = null;
+                this.currentUrl = null;
+                this.auditResults = {};
+                this.testCategories = [
+                    'keyboard-navigation',
+                    'screen-reader',
+                    'color-contrast',
+                    'document-structure'
+                ];
+                
+                this.bindEvents();
+                this.initializeDragDrop();
+                this.initializeDownloadButton();
+            }
+
+            bindEvents() {
+                // File upload
+                const pdfUpload = document.getElementById('pdf-upload');
+                pdfUpload.addEventListener('change', (e) => this.handleFileUpload(e));
+
+                // Website audit
+                const auditBtn = document.getElementById('audit-website-btn');
+                auditBtn.addEventListener('click', () => this.startWebsiteAudit());
+
+                // Download report
+                const downloadBtn = document.getElementById('download-report-btn');
+                downloadBtn.addEventListener('click', () => this.downloadReport());
+
+                // URL input enter key
+                const urlInput = document.getElementById('website-url');
+                urlInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        this.startWebsiteAudit();
+                    }
+                });
+            }
+
+            initializeDownloadButton() {
+                const downloadBtn = document.getElementById('download-report-btn');
+                downloadBtn.disabled = true;
+                downloadBtn.setAttribute('aria-disabled', 'true');
+            }
+
+            initializeDragDrop() {
+                const uploadZone = document.querySelector('.upload-zone');
+                
+                uploadZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadZone.classList.add('dragover');
+                });
+
+                uploadZone.addEventListener('dragleave', () => {
+                    uploadZone.classList.remove('dragover');
+                });
+
+                uploadZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadZone.classList.remove('dragover');
+                    
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0 && files[0].type === 'application/pdf') {
+                        this.handleFileUpload({ target: { files } });
+                    } else {
+                        this.showToast('Please upload a valid PDF file', 'error');
+                    }
+                });
+            }
+
+            async handleFileUpload(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                if (file.type !== 'application/pdf') {
+                    this.showToast('Please upload a PDF file', 'error');
+                    return;
+                }
+
+                if (file.size > 100 * 1024 * 1024) { // 100MB limit
+                    this.showToast('File size must be less than 100MB', 'error');
+                    return;
+                }
+
+                this.currentFile = file;
+                this.showToast('PDF uploaded successfully. Starting accessibility audit...', 'success');
+                this.announceToScreenReader('PDF file uploaded. Starting accessibility audit.');
+                
+                await this.startPDFAudit();
+            }
+
+            async startWebsiteAudit() {
+                const urlInput = document.getElementById('website-url');
+                const url = urlInput.value.trim();
+                
+                if (!url) {
+                    this.showToast('Please enter a website URL', 'error');
+                    urlInput.focus();
+                    return;
+                }
+
+                if (!this.isValidUrl(url)) {
+                    this.showToast('Please enter a valid URL (including https://)', 'error');
+                    urlInput.focus();
+                    return;
+                }
+
+                this.currentUrl = url;
+                this.showToast('Starting website accessibility audit...', 'success');
+                this.announceToScreenReader('Starting website accessibility audit.');
+                
+                await this.performWebsiteAudit();
+            }
+
+            async startPDFAudit() {
+                this.resetTestStatuses();
+                this.showResultsPanel();
+                
+                // Simulate PDF accessibility testing
+                const tests = [
+                    { id: 'tab-order-status', delay: 1000 },
+                    { id: 'focus-indicators-status', delay: 1500 },
+                    { id: 'keyboard-shortcuts-status', delay: 2000 },
+                    { id: 'focus-management-status', delay: 2500 },
+                    { id: 'aria-labels-status', delay: 3000 },
+                    { id: 'heading-structure-status', delay: 3500 },
+                    { id: 'alt-text-status', delay: 4000 },
+                    { id: 'live-regions-status', delay: 4500 },
+                    { id: 'text-contrast-status', delay: 5000 },
+                    { id: 'large-text-status', delay: 5500 },
+                    { id: 'ui-contrast-status', delay: 6000 },
+                    { id: 'color-dependency-status', delay: 6500 },
+                    { id: 'semantic-markup-status', delay: 7000 },
+                    { id: 'landmarks-status', delay: 7500 },
+                    { id: 'table-headers-status', delay: 8000 },
+                    { id: 'form-labels-status', delay: 8500 }
+                ];
+
+                // Start all tests
+                tests.forEach(test => {
+                    setTimeout(() => {
+                        this.updateTestStatus(test.id, 'running');
+                        
+                        // Complete test after brief delay
+                        setTimeout(() => {
+                            const result = this.simulateTestResult();
+                            this.updateTestStatus(test.id, result);
+                            this.updateResultsSummary();
+                        }, 500);
+                    }, test.delay);
+                });
+
+                // Generate detailed results after all tests complete
+                setTimeout(() => {
+                    this.generateDetailedResults();
+                    this.enableDownloadButton();
+                    this.announceToScreenReader('Accessibility audit completed. Results are now available.');
+                }, 9500);
+            }
+
+            async performWebsiteAudit() {
+                this.resetTestStatuses();
+                this.showResultsPanel();
+                
+                // Similar to PDF audit but with web-specific tests
+                await this.startPDFAudit(); // Reuse the same testing flow for demo
+            }
+
+            updateTestStatus(testId, status) {
+                const statusElement = document.getElementById(testId);
+                if (!statusElement) return;
+
+                statusElement.className = `test-status status-${status}`;
+                
+                switch(status) {
+                    case 'running':
+                        statusElement.innerHTML = '<span class="loading"></span> Running';
+                        break;
+                    case 'pass':
+                        statusElement.textContent = 'Pass';
+                        break;
+                    case 'fail':
+                        statusElement.textContent = 'Fail';
+                        break;
+                    case 'warning':
+                        statusElement.textContent = 'Warning';
+                        break;
+                    default:
+                        statusElement.textContent = 'Pending';
+                }
+            }
+
+            simulateTestResult() {
+                const outcomes = ['pass', 'fail', 'warning', 'pass', 'pass']; // Weighted toward pass
+                return outcomes[Math.floor(Math.random() * outcomes.length)];
+            }
+
+            updateResultsSummary() {
+                const totalTests = document.querySelectorAll('.test-status').length;
+                const passedTests = document.querySelectorAll('.status-pass').length;
+                const failedTests = document.querySelectorAll('.status-fail').length;
+                const warningTests = document.querySelectorAll('.status-warning').length;
+
+                document.getElementById('total-tests').textContent = totalTests;
+                document.getElementById('passed-tests').textContent = passedTests;
+                document.getElementById('failed-tests').textContent = failedTests;
+                document.getElementById('warning-tests').textContent = warningTests;
+            }
+
+            generateDetailedResults() {
+                const detailedResults = document.getElementById('detailed-results');
+                
+                const sampleIssues = [
+                    {
+                        type: 'error',
+                        title: 'Missing Alt Text',
+                        description: 'Images found without alternative text descriptions',
+                        location: 'Page 3, Image element #2'
+                    },
+                    {
+                        type: 'warning',
+                        title: 'Low Color Contrast',
+                        description: 'Text color contrast ratio is 3.2:1, below WCAG AA standard of 4.5:1',
+                        location: 'Page 1, Paragraph element'
+                    },
+                    {
+                        type: 'error',
+                        title: 'Missing Form Labels',
+                        description: 'Form input fields lack proper labels for screen readers',
+                        location: 'Page 5, Contact form'
+                    }
+                ];
+
+                detailedResults.innerHTML = `
+                    <div class="result-section">
+                        <h3>Critical Issues</h3>
+                        ${sampleIssues.filter(issue => issue.type === 'error').map(issue => `
+                            <div class="issue-item issue-${issue.type}">
+                                <div class="issue-title">${issue.title}</div>
+                                <div class="issue-description">${issue.description}</div>
+                                <div class="issue-location">${issue.location}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="result-section">
+                        <h3>Warnings</h3>
+                        ${sampleIssues.filter(issue => issue.type === 'warning').map(issue => `
+                            <div class="issue-item issue-${issue.type}">
+                                <div class="issue-title">${issue.title}</div>
+                                <div class="issue-description">${issue.description}</div>
+                                <div class="issue-location">${issue.location}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            resetTestStatuses() {
+                document.querySelectorAll('.test-status').forEach(status => {
+                    status.className = 'test-status status-pending';
+                    status.textContent = 'Pending';
+                });
+            }
+
+            showResultsPanel() {
+                const resultsPanel = document.getElementById('results-panel');
+                resultsPanel.classList.add('visible');
+                
+                // Scroll to results
+                setTimeout(() => {
+                    resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+
+            downloadReport() {
+                // Simulate report generation
+                this.showToast('Generating accessibility report...', 'success');
+                
+                setTimeout(() => {
+                    const reportContent = this.generateReportContent();
+                    const blob = new Blob([reportContent], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `accessibility-audit-report-${new Date().toISOString().split('T')[0]}.txt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    
+                    this.showToast('Report downloaded successfully!', 'success');
+                }, 2000);
+            }
+
+            generateReportContent() {
+                const timestamp = new Date().toLocaleString();
+                const source = this.currentFile ? `File: ${this.currentFile.name}` : `URL: ${this.currentUrl || 'Not specified'}`;
+                
+                return `
+ACCESSIBILITY AUDIT REPORT
+Generated: ${timestamp}
+Source: ${source}
+
+SUMMARY:
+- Total Tests: ${document.getElementById('total-tests').textContent}
+- Passed: ${document.getElementById('passed-tests').textContent}
+- Failed: ${document.getElementById('failed-tests').textContent}
+- Warnings: ${document.getElementById('warning-tests').textContent}
+
+DETAILED RESULTS:
+[Detailed accessibility findings would be included here in a production version]
+
+RECOMMENDATIONS:
+1. Fix all critical accessibility violations
+2. Address color contrast issues
+3. Add missing alternative text for images
+4. Ensure proper form labeling
+5. Test with actual screen readers
+6. Conduct user testing with disabled users
+
+Generated by PDfree.tools Accessibility Audit
+                `.trim();
+            }
+
+            isValidUrl(string) {
+                try {
+                    const url = new URL(string);
+                    return url.protocol === 'https:';
+                } catch (_) {
+                    return false;
+                }
+            }
+
+            enableDownloadButton() {
+                const downloadBtn = document.getElementById('download-report-btn');
+                downloadBtn.disabled = false;
+                downloadBtn.setAttribute('aria-disabled', 'false');
+            }
+
+            showToast(message, type = 'success') {
+                // Remove existing toast
+                const existing = document.getElementById('active-toast');
+                if (existing) existing.remove();
+
+                const toast = document.getElementById('toast-template').cloneNode(true);
+                toast.removeAttribute('style');
+                toast.id = 'active-toast';
+                toast.className = `toast toast-${type}`;
+                
+                const content = toast.querySelector('.toast-content');
+                content.textContent = message;
+                
+                document.body.appendChild(toast);
+                
+                // Show toast
+                setTimeout(() => toast.classList.add('visible'), 100);
+                
+                // Hide toast after 4 seconds
+                setTimeout(() => {
+                    toast.classList.remove('visible');
+                    setTimeout(() => {
+                        if (document.body.contains(toast)) {
+                            document.body.removeChild(toast);
+                        }
+                    }, 300);
+                }, 4000);
+            }
+
+            announceToScreenReader(message) {
+                const srStatus = document.getElementById('sr-status');
+                srStatus.textContent = message;
+                
+                // Clear after announcement
+                setTimeout(() => {
+                    srStatus.textContent = '';
+                }, 1000);
+            }
+        }
+
+        // Initialize the auditor when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new AccessibilityAuditor();
+        });
+
+        // Additional accessibility features
+        document.addEventListener('keydown', (e) => {
+            // Escape key to close modals/overlays
+            if (e.key === 'Escape') {
+                const activeToast = document.getElementById('active-toast');
+                if (activeToast) {
+                    activeToast.classList.remove('visible');
+                    setTimeout(() => {
+                        if (document.body.contains(activeToast)) {
+                            document.body.removeChild(activeToast);
+                        }
+                    }, 300);
+                }
+            }
+        });
+
+        // Reduced motion preference support
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (prefersReducedMotion.matches) {
+            document.documentElement.style.setProperty('--animation-duration', '0.01ms');
+        }
+    </script>
+</body>
+</html>

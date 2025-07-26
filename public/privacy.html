@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - PDfree.tools | Free PDF Tools with Privacy First</title>
+    <meta name="description" content="Learn how PDfree.tools protects your privacy. Files deleted after 1 hour, no email required, GDPR/CCPA compliant. Your data stays secure.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://pdffree.tools/privacy">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Privacy Policy - PDfree.tools">
+    <meta property="og:description" content="Privacy-first PDF tools. Files deleted after 1 hour, no email required.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pdffree.tools/privacy">
+    <meta property="og:image" content="https://pdffree.tools/og/privacy.png">
+    <meta name="twitter:card" content="summary_large_image">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-blue: #3B82F6;
+            --success-green: #10B981;
+            --warning-orange: #F59E0B;
+            --error-red: #EF4444;
+            --neutral-50: #F8FAFC;
+            --neutral-100: #F1F5F9;
+            --neutral-200: #E2E8F0;
+            --neutral-400: #94A3B8;
+            --neutral-600: #64748B;
+            --neutral-700: #334155;
+            --neutral-800: #1E293B;
+            --neutral-900: #0F172A;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--neutral-800);
+            background-color: var(--neutral-50);
+        }
+
+        /* Skip Link for Accessibility */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 6px;
+            background: var(--primary-blue);
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 4px;
+            z-index: 1000;
+        }
+
+        .skip-link:focus {
+            top: 6px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--neutral-200);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        .nav-link {
+            color: var(--neutral-600);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link:focus {
+            background: var(--neutral-100);
+            color: var(--primary-blue);
+        }
+
+        .nav-link:focus {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--neutral-900);
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: var(--neutral-600);
+            margin-bottom: 32px;
+        }
+
+        .trust-badges {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--success-green);
+            font-weight: 500;
+        }
+
+        .trust-icon {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
+        /* Content Sections */
+        .content-section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--neutral-900);
+            margin-bottom: 24px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary-blue);
+        }
+
+        .subsection {
+            margin-bottom: 32px;
+        }
+
+        .subsection h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--neutral-800);
+            margin-bottom: 16px;
+        }
+
+        .subsection h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--neutral-700);
+            margin-bottom: 12px;
+            margin-top: 20px;
+        }
+
+        .content-text {
+            color: var(--neutral-700);
+            margin-bottom: 16px;
+        }
+
+        .content-text strong {
+            color: var(--neutral-900);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.03), rgba(16, 185, 129, 0.03));
+            border: 1px solid var(--primary-blue);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .highlight-title {
+            font-weight: 600;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .technical-details {
+            background: var(--neutral-100);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 16px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            color: var(--neutral-700);
+        }
+
+        .rights-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .rights-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--neutral-200);
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .rights-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success-green);
+            font-weight: bold;
+        }
+
+        .rights-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Contact Section */
+        .contact-info {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            text-align: center;
+        }
+
+        .contact-email {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .contact-email:hover {
+            text-decoration: underline;
+        }
+
+        .contact-email:focus {
+            text-decoration: underline;
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* Last Updated */
+        .last-updated {
+            text-align: center;
+            color: var(--neutral-600);
+            font-style: italic;
+            margin-top: 48px;
+            padding-top: 24px;
+            border-top: 1px solid var(--neutral-200);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--neutral-900);
+            color: var(--neutral-400);
+            text-align: center;
+            padding: 32px 24px;
+            margin-top: 64px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--neutral-400);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--primary-blue);
+        }
+
+        .footer-link:focus {
+            color: var(--primary-blue);
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+            border-radius: 4px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 16px;
+            }
+
+            .main-content {
+                padding: 32px 16px;
+            }
+
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+            }
+
+            .trust-badges {
+                gap: 16px;
+            }
+
+            .trust-badge {
+                font-size: 14px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .highlight-box {
+                padding: 20px;
+            }
+
+            .contact-info {
+                padding: 24px;
+            }
+
+            .footer-links {
+                gap: 16px;
+                flex-direction: column;
+            }
+        }
+
+        /* Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --neutral-50: #0F172A;
+                --neutral-100: #1E293B;
+                --neutral-200: #334155;
+                --neutral-400: #64748B;
+                --neutral-600: #94A3B8;
+                --neutral-700: #CBD5E1;
+                --neutral-800: #E2E8F0;
+                --neutral-900: #F8FAFC;
+            }
+
+            body {
+                background-color: var(--neutral-50);
+            }
+
+            .header {
+                background: var(--neutral-100);
+                border-bottom-color: var(--neutral-200);
+            }
+
+            .contact-info {
+                background: var(--neutral-100);
+            }
+
+            .technical-details {
+                background: var(--neutral-200);
+            }
+
+            .footer {
+                background: #0B1220;
+                color: #94A3B8;
+            }
+        }
+
+        /* Focus Styles for Accessibility */
+        *:focus {
+            outline: 2px solid var(--primary-blue);
+            outline-offset: 2px;
+        }
+
+        /* High Contrast Mode Support */
+        @media (prefers-contrast: high) {
+            .trust-badge {
+                border: 1px solid currentColor;
+                padding: 4px 8px;
+                border-radius: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">PDfree.tools</a>
+            <nav aria-label="Primary">
+                <a href="/" class="nav-link">Home</a>
+                <a href="/tools" class="nav-link">Tools</a>
+                <a href="/terms" class="nav-link">Terms</a>
+                <a href="/privacy" class="nav-link" aria-current="page">Privacy</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content" class="main-content">
+        <section class="hero">
+            <h1>Privacy Policy</h1>
+            <p class="hero-subtitle">Your privacy is our priority. Learn how we protect your data.</p>
+            
+            <div class="trust-badges">
+                <div class="trust-badge">
+                    <svg class="trust-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false">
+                        <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd"/>
+                    </svg>
+                    100% Free & Unlimited
+                </div>
+                <div class="trust-badge">
+                    <svg class="trust-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false">
+                        <path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd"/>
+                    </svg>
+                    Files Deleted After 1 Hour
+                </div>
+                <div class="trust-badge">
+                    <svg class="trust-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false">
+                        <path d="M3 4a2 2 0 00-2 2v1.161l8.441 4.221a1.25 1.25 0 001.118 0L19 7.162V6a2 2 0 00-2-2H3z"/>
+                        <path d="M19 8.839l-7.77 3.885a2.75 2.75 0 01-2.46 0L1 8.839V14a2 2 0 002 2h14a2 2 0 002-2V8.839z"/>
+                    </svg>
+                    No Email Required
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">1. Data We Collect</h2>
+            
+            <div class="highlight-box">
+                <div class="highlight-title">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd"/>
+                    </svg>
+                    Privacy-First Approach
+                </div>
+                <p><strong>We collect minimal data to provide our service:</strong></p>
+            </div>
+            
+            <div class="subsection">
+                <h3>Files You Upload</h3>
+                <p class="content-text">When you use our PDF tools, we temporarily process your files to provide the requested service (convert, merge, split, etc.). <strong>We do not permanently store, read, or analyze the content of your files.</strong></p>
+            </div>
+
+            <div class="subsection">
+                <h3>Technical Information</h3>
+                <p class="content-text">We collect basic technical information to ensure our service works properly:</p>
+                <ul class="rights-list">
+                    <li>IP address (for rate limiting and abuse prevention)</li>
+                    <li>Browser type and version (for compatibility)</li>
+                    <li>Device type (mobile/desktop for optimization)</li>
+                    <li>File processing statistics (file size, processing time)</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <h3>What We DON'T Collect</h3>
+                <p class="content-text"><strong>We explicitly do not collect:</strong></p>
+                <ul class="rights-list">
+                    <li>Email addresses or personal contact information</li>
+                    <li>User accounts or login credentials</li>
+                    <li>File content or metadata</li>
+                    <li>Tracking cookies for advertising</li>
+                    <li>Personal identifying information</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">2. File Processing & Storage</h2>
+            
+            <div class="highlight-box">
+                <div class="highlight-title">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" focusable="false">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-13a.75.75 0 00-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 000-1.5h-3.25V5z" clip-rule="evenodd"/>
+                    </svg>
+                    Automatic 1-Hour Deletion
+                </div>
+                <p>All uploaded files are automatically and permanently deleted after approximately <strong>1 hour</strong>, regardless of whether you download the processed result.</p>
+            </div>
+
+            <div class="subsection">
+                <h3>Technical Infrastructure</h3>
+                <p class="content-text">Our file processing infrastructure is designed for privacy and security:</p>
+                
+                <div class="technical-details">
+                    <strong>Storage Location:</strong> Cloudflare R2 (Global Edge Network)<br>
+                    <strong>Processing:</strong> Client-side when possible, secure cloud workers for large files<br>
+                    <strong>Encryption:</strong> Files encrypted at rest using AES-256<br>
+                    <strong>Access:</strong> Only automated processing systems, no human access<br>
+                    <strong>Deletion:</strong> Automated deletion within approximately 1 hour
+                </div>
+            </div>
+
+            <div class="subsection">
+                <h4>Cloudflare R2 Storage Regions</h4>
+                <p class="content-text">Your files may be temporarily stored in any of Cloudflare's global data centers for optimal performance. Primary regions include:</p>
+                <ul class="rights-list">
+                    <li>United States (multiple locations)</li>
+                    <li>European Union (GDPR compliant facilities)</li>
+                    <li>Asia-Pacific (Australia, Singapore, Japan)</li>
+                    <li>Other Cloudflare edge locations as needed for performance</li>
+                </ul>
+                <p class="content-text"><strong>All storage locations maintain the same 1-hour deletion policy and encryption standards.</strong></p>
+            </div>
+
+            <div class="subsection">
+                <h3>Processing Methods</h3>
+                <h4>Client-Side Processing (Preferred)</h4>
+                <p class="content-text">When possible, we process files directly in your browser using JavaScript libraries. This means:</p>
+                <ul class="rights-list">
+                    <li>Maximum privacy protection</li>
+                    <li>Faster processing times</li>
+                    <li>Reduced server load</li>
+                    <li>Enhanced user experience</li>
+                </ul>
+
+                <h4>Server-Side Processing (When Necessary)</h4>
+                <p class="content-text">For large files or complex operations, we use secure cloud processing:</p>
+                <ul class="rights-list">
+                    <li>Encrypted transmission (HTTPS/TLS 1.3)</li>
+                    <li>Processing in isolated containers</li>
+                    <li>No logging of file content</li>
+                    <li>Immediate deletion after processing</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">3. GDPR & CCPA Compliance</h2>
+            
+            <div class="subsection">
+                <h3>Your Rights Under GDPR (EU Users)</h3>
+                <p class="content-text">If you're in the European Union, you have these rights regarding your data:</p>
+                <ul class="rights-list">
+                    <li><strong>Right to Access:</strong> Request information about data we process</li>
+                    <li><strong>Right to Rectification:</strong> Correct inaccurate data</li>
+                    <li><strong>Right to Erasure:</strong> Request deletion of your data</li>
+                    <li><strong>Right to Restrict Processing:</strong> Limit how we use your data</li>
+                    <li><strong>Right to Data Portability:</strong> Receive your data in portable format</li>
+                    <li><strong>Right to Object:</strong> Object to processing for specific purposes</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <h3>Your Rights Under CCPA (California Users)</h3>
+                <p class="content-text">If you're a California resident, you have these additional rights:</p>
+                <ul class="rights-list">
+                    <li><strong>Right to Know:</strong> What personal information we collect and how it's used</li>
+                    <li><strong>Right to Delete:</strong> Request deletion of personal information</li>
+                    <li><strong>Right to Opt-Out:</strong> Opt out of sale of personal information (we don't sell data)</li>
+                    <li><strong>Right to Non-Discrimination:</strong> Equal service regardless of privacy choices</li>
+                </ul>
+            </div>
+
+            <div class="highlight-box">
+                <div class="highlight-title">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.236 4.53L8.181 10.5a.75.75 0 00-1.06 1.061l1.5 1.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/>
+                    </svg>
+                    Easy Compliance
+                </div>
+                <p>Since we don't store your files or require accounts, <strong>most requests are automatically fulfilled by our 1-hour deletion policy.</strong> For other inquiries, contact us below.</p>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">4. Cookies & Tracking</h2>
+            
+            <div class="subsection">
+                <h3>Essential Cookies Only</h3>
+                <p class="content-text">We use minimal cookies necessary for the service to function:</p>
+                <ul class="rights-list">
+                    <li><strong>Session cookies:</strong> Remember your preferences during your visit</li>
+                    <li><strong>Security cookies:</strong> Protect against abuse and ensure secure connections</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <h3>No Advertising Trackers</h3>
+                <p class="content-text"><strong>We do not use:</strong></p>
+                <ul class="rights-list">
+                    <li>Third-party advertising trackers</li>
+                    <li>Social media pixels</li>
+                    <li>Cross-site tracking cookies</li>
+                    <li>Behavioral profiling systems</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <h3>Cookie-less Analytics</h3>
+                <p class="content-text">We use privacy-respecting analytics (Plausible Analytics) that:</p>
+                <ul class="rights-list">
+                    <li>Doesn't use cookies</li>
+                    <li>Doesn't collect personal data</li>
+                    <li>Aggregates data only</li>
+                    <li>Complies with GDPR without consent prompts</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">5. Third-Party Services</h2>
+            
+            <div class="subsection">
+                <h3>Cloudflare</h3>
+                <p class="content-text">We use Cloudflare for:</p>
+                <ul class="rights-list">
+                    <li>Content delivery network (CDN)</li>
+                    <li>DDoS protection and security</li>
+                    <li>File storage (R2) with encryption</li>
+                    <li>Edge computing for processing</li>
+                </ul>
+                <p class="content-text">Cloudflare may temporarily cache files for performance but follows our 1-hour deletion policy. <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Cloudflare Privacy Policy</a></p>
+            </div>
+
+            <div class="subsection">
+                <h3>Payment Processing (Future)</h3>
+                <p class="content-text">If we add premium features, we'll use:</p>
+                <ul class="rights-list">
+                    <li>Stripe for secure payment processing</li>
+                    <li>No storage of payment details on our servers</li>
+                    <li>PCI DSS compliant handling</li>
+                    <li>Transparent billing practices</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">6. Data Security</h2>
+            
+            <div class="subsection">
+                <h3>Security Measures</h3>
+                <p class="content-text">We protect your data with industry-standard security:</p>
+                <ul class="rights-list">
+                    <li><strong>Encryption in Transit:</strong> HTTPS/TLS 1.3 for all connections</li>
+                    <li><strong>Encryption at Rest:</strong> AES-256 encryption for stored files</li>
+                    <li><strong>Access Controls:</strong> No human access to user files</li>
+                    <li><strong>Rate Limiting:</strong> Prevents abuse and ensures fair usage</li>
+                    <li><strong>Regular Security Audits:</strong> Automated and manual security testing</li>
+                    <li><strong>Secure Infrastructure:</strong> Hardened servers and containers</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <h3>Incident Response</h3>
+                <p class="content-text">In the unlikely event of a security incident:</p>
+                <ul class="rights-list">
+                    <li>We'll assess the scope within 24 hours</li>
+                    <li>Affected users will be notified within 72 hours</li>
+                    <li>We'll provide clear information about what happened</li>
+                    <li>Regulatory authorities will be notified as required</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">7. Children's Privacy</h2>
+            
+            <div class="subsection">
+                <p class="content-text">PDfree.tools is designed to be safe for users of all ages. We do not knowingly collect personal information from children under 13. If you believe a child has provided personal information, please contact us immediately and we will delete it.</p>
+                
+                <p class="content-text">Our service is particularly safe for educational use because:</p>
+                <ul class="rights-list">
+                    <li>No account creation required</li>
+                    <li>No personal information collected</li>
+                    <li>Files automatically deleted</li>
+                    <li>No chat or social features</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">8. Changes to This Policy</h2>
+            
+            <div class="subsection">
+                <p class="content-text">We may update this Privacy Policy to reflect changes in our practices or for legal reasons. When we make changes:</p>
+                <ul class="rights-list">
+                    <li>We'll update the "Last Updated" date</li>
+                    <li>Significant changes will be highlighted on our homepage</li>
+                    <li>We'll maintain previous versions for reference</li>
+                    <li>Your continued use constitutes acceptance of changes</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="content-section">
+            <h2 class="section-title">9. Contact Us</h2>
+            
+            <div class="contact-info">
+                <h3>Questions About Privacy?</h3>
+                <p class="content-text">We're committed to transparency and protecting your privacy. Contact us anytime:</p>
+                
+                <p style="margin: 24px 0;">
+                    <a href="mailto:privacy@pdffree.tools" class="contact-email">privacy@pdffree.tools</a>
+                </p>
+                
+                <p class="content-text">
+                    <strong>Response Time:</strong> We typically respond within 24 hours<br>
+                    <strong>GDPR/CCPA Requests:</strong> Processed within 30 days as required by law
+                </p>
+            </div>
+        </section>
+
+        <div class="last-updated">
+            <p>Last Updated: July 25, 2025</p>
+            <p>Effective Date: July 25, 2025</p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="/" class="footer-link">Home</a>
+            <a href="/tools" class="footer-link">All Tools</a>
+            <a href="/about" class="footer-link">About</a>
+            <a href="/terms" class="footer-link">Terms of Service</a>
+            <a href="/privacy" class="footer-link">Privacy Policy</a>
+            <a href="/contact" class="footer-link">Contact</a>
+        </div>
+        <p>&copy; 2025 PDfree.tools. Built with privacy in mind.</p>
+    </footer>
+</body>
+</html>

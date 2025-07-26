@@ -1,0 +1,571 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { AlertTriangle, RefreshCw, Download, Upload, Wifi, WifiOff, CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
+
+// Error Types Enum
+const ERROR_TYPES = {
+  NETWORK: 'network',
+  FILE_PROCESSING: 'file_processing',
+  FILE_SIZE: 'file_size',
+  FILE_FORMAT: 'file_format',
+  SERVER: 'server',
+  TIMEOUT: 'timeout',
+  QUOTA_EXCEEDED: 'quota_exceeded',
+  UNKNOWN: 'unknown'
+};
+
+// Error severity levels
+const ERROR_SEVERITY = {
+  LOW: 'low',
+  MEDIUM: 'medium',
+  HIGH: 'high',
+  CRITICAL: 'critical'
+};
+
+// Retry configuration with exponential backoff
+const RETRY_CONFIG = {
+  maxAttempts: 3,
+  baseDelay: 1000,
+  maxDelay: 10000,
+  backoffFactor: 2
+};
+
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null, errorInfo: null, retryCount: 0 };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    this.setState({
+      error: error,
+      errorInfo: errorInfo
+    });
+    
+    // Log error to monitoring service (Sentry, etc.)
+    console.error('Error Boundary caught an error:', error, errorInfo);
+  }
+
+  handleRetry = () => {
+    this.setState(prevState => ({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      retryCount: prevState.retryCount + 1
+    }));
+  };
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+            <div className="flex items-center space-x-3 mb-4">
+              <XCircle className="w-6 h-6 text-red-500" />
+              <h2 className="text-xl font-semibold text-slate-900">Something went wrong</h2>
+            </div>
+            
+            <p className="text-slate-600 mb-6">
+              We encountered an unexpected error. Your files are safe and will be automatically deleted in 1 hour.
+            </p>
+            
+            <div className="space-y-3">
+              <button
+                onClick={this.handleRetry}
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
+              >
+                <RefreshCw className="w-4 h-4" />
+                <span>Try Again</span>
+              </button>
+              
+              <button
+                onClick={() => window.location.reload()}
+                className="w-full bg-slate-200 text-slate-700 py-2 px-4 rounded-lg hover:bg-slate-300 transition-colors"
+              >
+                Refresh Page
+              </button>
+            </div>
+            
+            {this.state.retryCount > 0 && (
+              <p className="text-sm text-slate-500 mt-4">
+                Retry attempt: {this.state.retryCount}
+              </p>
+            )}
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+// Custom hook for exponential backoff retry logic
+const useRetry = () => {
+  const [retryCount, setRetryCount] = useState(0);
+  const [isRetrying, setIsRetrying] = useState(false);
+  
+  const calculateDelay = useCallback((attempt) => {
+    const delay = Math.min(
+      RETRY_CONFIG.baseDelay * Math.pow(RETRY_CONFIG.backoffFactor, attempt),
+      RETRY_CONFIG.maxDelay
+    );
+    return delay + Math.random() * 1000; // Add jitter
+  }, []);
+
+  const retry = useCallback(async (operation, maxAttempts = RETRY_CONFIG.maxAttempts) => {
+    setIsRetrying(true);
+    let lastError;
+    
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      try {
+        setRetryCount(attempt);
+        const result = await operation();
+        setIsRetrying(false);
+        setRetryCount(0);
+        return result;
+      } catch (error) {
+        lastError = error;
+        
+        if (attempt < maxAttempts - 1) {
+          const delay = calculateDelay(attempt);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
+    }
+    
+    setIsRetrying(false);
+    setRetryCount(0);
+    throw lastError;
+  }, [calculateDelay]);
+
+  return { retry, retryCount, isRetrying };
+};
+
+// Error message mapping for user-friendly messages
+const getErrorMessage = (error) => {
+  const errorMessages = {
+    [ERROR_TYPES.NETWORK]: {
+      title: "Connection Problem",
+      message: "Please check your internet connection and try again.",
+      severity: ERROR_SEVERITY.MEDIUM,
+      icon: WifiOff,
+      canRetry: true
+    },
+    [ERROR_TYPES.FILE_PROCESSING]: {
+      title: "Processing Error",
+      message: "We couldn't process your file. It might be corrupted or in an unsupported format.",
+      severity: ERROR_SEVERITY.MEDIUM,
+      icon: AlertTriangle,
+      canRetry: true
+    },
+    [ERROR_TYPES.FILE_SIZE]: {
+      title: "File Too Large",
+      message: "Your file exceeds the 50MB limit. Try compressing it first or contact support for larger files.",
+      severity: ERROR_SEVERITY.LOW,
+      icon: AlertCircle,
+      canRetry: false
+    },
+    [ERROR_TYPES.FILE_FORMAT]: {
+      title: "Unsupported Format",
+      message: "This file format isn't supported. We support PDF, DOCX, JPG, PNG, and more.",
+      severity: ERROR_SEVERITY.LOW,
+      icon: AlertCircle,
+      canRetry: false
+    },
+    [ERROR_TYPES.SERVER]: {
+      title: "Server Error",
+      message: "Our servers are experiencing issues. We're working to fix this quickly.",
+      severity: ERROR_SEVERITY.HIGH,
+      icon: AlertTriangle,
+      canRetry: true
+    },
+    [ERROR_TYPES.TIMEOUT]: {
+      title: "Processing Timeout",
+      message: "Your file is taking longer than expected to process. Large files may need more time.",
+      severity: ERROR_SEVERITY.MEDIUM,
+      icon: Clock,
+      canRetry: true
+    },
+    [ERROR_TYPES.QUOTA_EXCEEDED]: {
+      title: "Daily Limit Reached",
+      message: "You've reached the daily limit for free conversions. Try again tomorrow or upgrade for unlimited access.",
+      severity: ERROR_SEVERITY.MEDIUM,
+      icon: AlertCircle,
+      canRetry: false
+    },
+    [ERROR_TYPES.UNKNOWN]: {
+      title: "Unexpected Error",
+      message: "Something unexpected happened. Please try again or contact support if the problem persists.",
+      severity: ERROR_SEVERITY.HIGH,
+      icon: XCircle,
+      canRetry: true
+    }
+  };
+
+  return errorMessages[error.type] || errorMessages[ERROR_TYPES.UNKNOWN];
+};
+
+// Toast notification component
+const Toast = ({ error, onRetry, onDismiss, isRetrying, retryCount }) => {
+  const errorInfo = getErrorMessage(error);
+  const Icon = errorInfo.icon;
+  
+  const severityColors = {
+    [ERROR_SEVERITY.LOW]: 'bg-yellow-50 border-yellow-200',
+    [ERROR_SEVERITY.MEDIUM]: 'bg-orange-50 border-orange-200',
+    [ERROR_SEVERITY.HIGH]: 'bg-red-50 border-red-200',
+    [ERROR_SEVERITY.CRITICAL]: 'bg-red-100 border-red-300'
+  };
+
+  return (
+    <div className={`fixed top-4 right-4 max-w-md w-full border-l-4 rounded-lg shadow-lg p-4 ${severityColors[errorInfo.severity]} z-50`}>
+      <div className="flex items-start space-x-3">
+        <Icon className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+        <div className="flex-1">
+          <h4 className="font-semibold text-slate-900">{errorInfo.title}</h4>
+          <p className="text-sm text-slate-600 mt-1">{errorInfo.message}</p>
+          
+          {isRetrying && retryCount > 0 && (
+            <p className="text-xs text-slate-500 mt-2">
+              Attempt {retryCount} of {RETRY_CONFIG.maxAttempts}
+            </p>
+          )}
+          
+          {/* Error details for debugging (collapsed by default) */}
+          {error.message && process.env.NODE_ENV === 'development' && (
+            <details className="mt-2">
+              <summary className="text-xs text-slate-500 cursor-pointer">Technical Details</summary>
+              <p className="text-xs text-slate-400 mt-1 font-mono">{error.message}</p>
+            </details>
+          )}
+          
+          <div className="flex space-x-2 mt-3">
+            {errorInfo.canRetry && (
+              <button
+                onClick={onRetry}
+                disabled={isRetrying}
+                className="text-sm bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition-colors disabled:opacity-50 flex items-center space-x-1"
+              >
+                {isRetrying ? (
+                  <>
+                    <RefreshCw className="w-3 h-3 animate-spin" />
+                    <span>Retrying...</span>
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-3 h-3" />
+                    <span>Retry</span>
+                  </>
+                )}
+              </button>
+            )}
+            <button
+              onClick={onDismiss}
+              className="text-sm text-slate-600 hover:text-slate-800 transition-colors"
+            >
+              Dismiss
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Main component demonstrating error handling
+const ErrorHandlingDemo = () => {
+  const [processingState, setProcessingState] = useState('idle'); // idle, processing, success, error
+  const [currentError, setCurrentError] = useState(null);
+  const [processResult, setProcessResult] = useState(null);
+  const isBrowser = typeof window !== 'undefined';
+  const [isOnline, setIsOnline] = useState(isBrowser ? navigator.onLine : true);
+  const [file, setFile] = useState(null);
+  const { retry, retryCount, isRetrying } = useRetry();
+  
+  // Monitor online status
+  useEffect(() => {
+    if (!isBrowser) return;
+    
+    const handleOnline = () => setIsOnline(true);
+    const handleOffline = () => setIsOnline(false);
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [isBrowser]);
+
+  // Helper function to normalize error types
+const toErrorType = (errorType) => {
+  switch (errorType) {
+    case 'network': return ERROR_TYPES.NETWORK;
+    case 'fileSize': return ERROR_TYPES.FILE_SIZE;
+    case 'processing': return ERROR_TYPES.FILE_PROCESSING;
+    case 'timeout': return ERROR_TYPES.TIMEOUT;
+    case 'server': return ERROR_TYPES.SERVER;
+    default: return ERROR_TYPES.UNKNOWN;
+  }
+};
+
+// Simulate different types of errors for demonstration
+  const simulateError = (errorType) => {
+    const errors = {
+      network: new Error('Network connection failed'),
+      fileSize: new Error('File size exceeds limit'),
+      processing: new Error('Failed to process PDF'),
+      timeout: new Error('Operation timed out'),
+      server: new Error('Internal server error')
+    };
+    
+    const error = errors[errorType] || errors.network;
+    error.type = toErrorType(errorType);
+    return error;
+  };
+
+  // Mock file processing function with potential failures
+  const processFile = async (shouldFail = null) => {
+    // Simulate network check
+    if (!isOnline) {
+      throw simulateError('network');
+    }
+
+    // Simulate various failure scenarios
+    if (shouldFail) {
+      throw simulateError(shouldFail);
+    }
+
+    // Simulate processing delay
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Random failure for demonstration (20% chance)
+    if (Math.random() < 0.2) {
+      const errorTypes = [ERROR_TYPES.NETWORK, ERROR_TYPES.FILE_PROCESSING, ERROR_TYPES.TIMEOUT, ERROR_TYPES.SERVER];
+      const randomError = errorTypes[Math.floor(Math.random() * errorTypes.length)];
+      const error = new Error('Random processing failure');
+      error.type = randomError;
+      throw error;
+    }
+    
+    return { success: true, downloadUrl: 'blob:demo-file.pdf' };
+  };
+
+  // Handle file processing with retry logic
+  const handleProcessFile = async (errorType = null) => {
+    setProcessingState('processing');
+    setCurrentError(null);
+    setProcessResult(null);
+    
+    try {
+      const result = await retry(() => processFile(errorType));
+      setProcessResult(result);
+      setProcessingState('success');
+      console.log('File processed successfully:', result);
+    } catch (error) {
+      setCurrentError(error);
+      setProcessingState('error');
+    }
+  };
+
+  // Graceful degradation options
+  const showDegradationOptions = () => {
+    return (
+      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <h4 className="font-semibold text-blue-900 mb-2">Alternative Options</h4>
+        <div className="space-y-2 text-sm">
+          <p className="text-blue-800">• Try downloading our desktop app for offline processing</p>
+          <p className="text-blue-800">• Email your file to process@pdffree.tools for manual processing</p>
+          <p className="text-blue-800">• Use our mobile app which has different processing servers</p>
+          <p className="text-blue-800">• Contact support for assistance with problematic files</p>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      {/* Connection Status Banner */}
+      {!isOnline && (
+        <div className="bg-red-500 text-white text-center py-2 px-4">
+          <div className="flex items-center justify-center space-x-2">
+            <WifiOff className="w-4 h-4" />
+            <span>You're offline. Some features may not work properly.</span>
+          </div>
+        </div>
+      )}
+      
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Error Handling & Recovery Demo</h1>
+          <p className="text-slate-600 mb-8">Demonstration of comprehensive error handling with retry mechanisms and graceful degradation.</p>
+          
+          {/* File Upload Area */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4">Upload & Process File</h2>
+            
+            <div className="border-2 border-dashed border-slate-300 rounded-lg p-8 text-center">
+              <Upload className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+              <p className="text-slate-600 mb-4">Drop a file here or click to upload</p>
+              <input
+                type="file"
+                onChange={(e) => setFile(e.target.files[0])}
+                className="hidden"
+                id="file-upload"
+              />
+              <label
+                htmlFor="file-upload"
+                className="inline-block bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
+              >
+                Choose File
+              </label>
+            </div>
+            
+            {file && (
+              <div className="mt-4 p-3 bg-slate-50 rounded">
+                <p className="text-sm text-slate-700">Selected: {file.name}</p>
+              </div>
+            )}
+          </div>
+          
+          {/* Processing Controls */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h3 className="text-lg font-semibold mb-4">Test Error Scenarios</h3>
+            
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              <button
+                onClick={() => handleProcessFile()}
+                disabled={processingState === 'processing'}
+                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+              >
+                Process Successfully
+              </button>
+              
+              <button
+                onClick={() => handleProcessFile('network')}
+                disabled={processingState === 'processing'}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                Simulate Network Error
+              </button>
+              
+              <button
+                onClick={() => handleProcessFile('fileSize')}
+                disabled={processingState === 'processing'}
+                className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50"
+              >
+                Simulate Size Error
+              </button>
+              
+              <button
+                onClick={() => handleProcessFile('processing')}
+                disabled={processingState === 'processing'}
+                className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50"
+              >
+                Simulate Processing Error
+              </button>
+            </div>
+          </div>
+          
+          {/* Processing Status */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <h3 className="text-lg font-semibold mb-4">Processing Status</h3>
+            
+            {processingState === 'idle' && (
+              <div className="flex items-center space-x-3 text-slate-600">
+                <div className="w-2 h-2 bg-slate-400 rounded-full"></div>
+                <span>Ready to process files</span>
+              </div>
+            )}
+            
+            {processingState === 'processing' && (
+              <div className="flex items-center space-x-3 text-blue-600">
+                <RefreshCw className="w-5 h-5 animate-spin" />
+                <span>
+                  Processing file... 
+                  {isRetrying && retryCount > 0 && ` (Retry ${retryCount}/${RETRY_CONFIG.maxAttempts})`}
+                </span>
+              </div>
+            )}
+            
+            {processingState === 'success' && (
+              <div className="flex items-center space-x-3 text-green-600">
+                <CheckCircle className="w-5 h-5" />
+                <span>File processed successfully!</span>
+                {processResult?.downloadUrl && (
+                  <a 
+                    href={processResult.downloadUrl} 
+                    download="processed-file.pdf"
+                    className="ml-auto bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors inline-flex items-center space-x-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span>Download</span>
+                  </a>
+                )}
+              </div>
+            )}
+            
+            {processingState === 'error' && currentError && (
+              <div className="space-y-4">
+                <div className="flex items-center space-x-3 text-red-600">
+                  <XCircle className="w-5 h-5" />
+                  <span>Processing failed</span>
+                </div>
+                
+                {showDegradationOptions()}
+              </div>
+            )}
+          </div>
+          
+          {/* Error Analytics */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold mb-4">Error Handling Stats</h3>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-slate-600">Connection Status</p>
+                <p className="font-semibold flex items-center space-x-2">
+                  {isOnline ? <Wifi className="w-4 h-4 text-green-500" /> : <WifiOff className="w-4 h-4 text-red-500" />}
+                  <span>{isOnline ? 'Online' : 'Offline'}</span>
+                </p>
+              </div>
+              <div>
+                <p className="text-slate-600">Current Retry Count</p>
+                <p className="font-semibold">{retryCount}/{RETRY_CONFIG.maxAttempts}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Toast Notifications */}
+      {currentError && (
+        <Toast
+          error={currentError}
+          onRetry={() => handleProcessFile()}
+          onDismiss={() => setCurrentError(null)}
+          isRetrying={isRetrying}
+          retryCount={retryCount}
+        />
+      )}
+    </div>
+  );
+};
+
+// Main App with Error Boundary
+const App = () => {
+  const [errorKey, setErrorKey] = useState(0);
+  
+  return (
+    <ErrorBoundary key={errorKey}>
+      <ErrorHandlingDemo />
+    </ErrorBoundary>
+  );
+};
+
+export default App;
