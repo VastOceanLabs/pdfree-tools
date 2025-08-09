@@ -1,69 +1,33 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import { resolve } from 'path'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
-// https://vitejs.dev/config/
+// Import worker explicitly so Vite bundles it correctly
+import pdfWorker from 'pdfjs-dist/build/pdf.worker.min.js?url';
+
 export default defineConfig({
   plugins: [react()],
-  
-  // Path resolution
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src'),
-      '@/components': resolve(__dirname, './src/components'),
-      '@/pages': resolve(__dirname, './src/pages'),
-      '@/utils': resolve(__dirname, './src/utils'),
-      '@/hooks': resolve(__dirname, './src/hooks'),
-      '@/types': resolve(__dirname, './src/types'),
-      '@/config': resolve(__dirname, './src/config'),
-    },
+      '@': path.resolve(__dirname, 'src'),
+      '@lib/pdfjs': path.resolve(__dirname, 'src/lib/pdfjs.ts'),
+      // Ensure pdfjs uses the correct worker
+      'pdfjs-dist/build/pdf.worker.min.js': pdfWorker
+    }
   },
-
-  // Development server configuration
-  server: {
-    port: 3000,
-    host: true,
-    open: true,
-  },
-
-  // Build configuration
   build: {
-    outDir: 'dist',
-    sourcemap: true,
-    // Optimize for modern browsers
-    target: 'es2020',
-    // Chunk size warnings
-    chunkSizeWarningLimit: 1000,
+    target: 'es2022', // modern enough for PDF.js
+    assetsInlineLimit: 0, // avoid inlining large PDFs
     rollupOptions: {
       output: {
-        // Manual chunk splitting for better caching
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          pdf: ['pdf-lib'],
-        },
-      },
-    },
+        manualChunks(id) {
+          if (id.includes('pdfjs-dist')) return 'pdfjs';
+          if (id.includes('pdf-lib')) return 'pdf-lib';
+        }
+      }
+    }
   },
-
-  // Preview configuration (for built app)
-  preview: {
-    port: 3000,
-    host: true,
-  },
-
-  // Environment variables
-  define: {
-    __DEV__: JSON.stringify(process.env.NODE_ENV === 'development'),
-    __PROD__: JSON.stringify(process.env.NODE_ENV === 'production'),
-  },
-
-  // CSS configuration
-  css: {
-    postcss: './postcss.config.js',
-  },
-
-  // Optimize dependencies
   optimizeDeps: {
-    include: ['react', 'react-dom', 'react-router-dom', 'pdf-lib', 'lucide-react'],
-  },
-})
+    include: ['pdf-lib', 'pdfjs-dist']
+  }
+});
