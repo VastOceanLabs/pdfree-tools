@@ -3,15 +3,20 @@ module.exports = {
     collect: {
       url: [
         'http://localhost:3000',
-        'http://localhost:3000/pdf-to-word',
-        'http://localhost:3000/compress-pdf',
-        'http://localhost:3000/merge-pdf',
-        'http://localhost:3000/split-pdf',
+       module.exports = {
+  ci: {
+    collect: {
+      url: [
+        'http://localhost:4173',
+        'http://localhost:4173/pdf-to-word',
+        'http://localhost:4173/compress-pdf',
+        'http://localhost:4173/merge-pdf',
+        'http://localhost:4173/split-pdf',
       ],
-      startServerCommand: 'npm run build && npm run start',
-      startServerReadyPattern: 'ready -', // Matches Next.js "ready -" log line
+      startServerCommand: 'npm run build && npm run preview',
+      startServerReadyPattern: 'Local:.*4173', // Matches Vite preview server output
       numberOfRuns: 3,
-      startServerReadyTimeout: 120000, // 2 minutes for build + start
+      startServerReadyTimeout: 120000, // 2 minutes for build + preview
     },
     assert: {
       preset: 'lighthouse:recommended',
@@ -47,6 +52,11 @@ module.exports = {
         'is-on-https': ['error'],
         'uses-text-compression': ['error'],
         'unused-css-rules': ['warn', { maxNumericValue: 20000 }], // Allow some unused CSS
+        
+        // Vite-specific optimizations to test
+        'uses-rel-preload': ['warn'], // Vite handles module preloading
+        'efficient-animated-content': ['warn'], // For PDF processing animations
+        'non-composited-animations': ['warn'], // For smooth UI transitions
       },
     },
     upload: {
