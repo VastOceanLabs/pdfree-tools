@@ -11,14 +11,14 @@ import {
   CheckCircle,
   AlertCircle,
   RefreshCw,
-  Grid3X3
+  LayoutGrid
 } from 'lucide-react';
 
 // Normalize rotation to 0-359 degrees
-const normalize = (v) => ((v % 360) + 360) % 360;
+const normalize = (v: number) => ((v % 360) + 360) % 360;
 
 // Toast notification component
-const Toast = ({ message, type, onClose }) => (
+const Toast = ({ message, type, onClose }: { message: string; type: 'success' | 'error' | 'info'; onClose: () => void }) => (
   <div 
     role="alert"
     aria-live="assertive"
@@ -44,7 +44,7 @@ const Toast = ({ message, type, onClose }) => (
 );
 
 // Loading overlay component
-const LoadingOverlay = ({ message }) => (
+const LoadingOverlay = ({ message }: { message: string }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40">
     <div className="bg-white rounded-lg p-6 max-w-sm mx-4">
       <div className="flex items-center gap-3">
@@ -56,7 +56,21 @@ const LoadingOverlay = ({ message }) => (
 );
 
 // PDF Page Preview Component
-const PDFPagePreview = ({ pageImage, pageNumber, rotation, onRotate, isSelected, onSelect }) => (
+const PDFPagePreview = ({
+  pageImage,
+  pageNumber,
+  rotation,
+  onRotate,
+  isSelected,
+  onSelect
+}: {
+  pageImage: string | null;
+  pageNumber: number;
+  rotation: number;
+  onRotate: (deg: number) => void;
+  isSelected: boolean;
+  onSelect: () => void;
+}) => (
   <div className={`relative border-2 rounded-lg p-4 transition-all duration-200 ${
     isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'
   }`}>
@@ -109,45 +123,46 @@ const PDFPagePreview = ({ pageImage, pageNumber, rotation, onRotate, isSelected,
 
 export default function RotatePdf() {
   const [dragActive, setDragActive] = useState(false);
-  const [file, setFile] = useState(null);
-  const [pages, setPages] = useState([]);
-  const [selectedPages, setSelectedPages] = useState(new Set());
+  const [file, setFile] = useState<File | null>(null);
+  const [pages, setPages] = useState<Array<{ pageNumber: number; rotation: number; image: string | null }>>([]);
+  const [selectedPages, setSelectedPages] = useState<Set<number>>(new Set());
   const [processing, setProcessing] = useState(false);
-  const [toast, setToast] = useState(null);
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
   const [hasRotations, setHasRotations] = useState(false);
-  const fileInputRef = useRef(null);
-  const deleteTimerRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const deleteTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Cleanup timer on unmount
   useEffect(() => {
     return () => {
       if (deleteTimerRef.current) {
         clearTimeout(deleteTimerRef.current);
+        deleteTimerRef.current = null;
       }
     };
   }, []);
 
-  const showToast = useCallback((message, type = 'info') => {
+  const showToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 5000);
   }, []);
 
-  const handleDrag = useCallback((e) => {
+  const handleDrag = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") {
+    if (e.type === 'dragenter' || e.type === 'dragover') {
       setDragActive(true);
-    } else if (e.type === "dragleave") {
+    } else if (e.type === 'dragleave') {
       setDragActive(false);
     }
   }, []);
 
-  const handleDrop = useCallback((e) => {
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
     
-    const droppedFile = e.dataTransfer.files[0];
+    const droppedFile = e.dataTransfer.files?.[0];
     if (droppedFile && droppedFile.type === 'application/pdf') {
       handleFile(droppedFile);
     } else {
@@ -155,14 +170,14 @@ export default function RotatePdf() {
     }
   }, [showToast]);
 
-  const handleFileInput = useCallback((e) => {
-    const selectedFile = e.target.files[0];
+  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
     if (selectedFile) {
       handleFile(selectedFile);
     }
   }, []);
 
-  const handleFile = async (uploadedFile) => {
+  const handleFile = async (uploadedFile: File) => {
     // Validate file size (100MB limit)
     const maxSize = 100 * 1024 * 1024; // 100MB in bytes
     if (uploadedFile.size > maxSize) {
@@ -176,6 +191,7 @@ export default function RotatePdf() {
       // Clear any existing timer
       if (deleteTimerRef.current) {
         clearTimeout(deleteTimerRef.current);
+        deleteTimerRef.current = null;
       }
 
       // Simulate PDF page extraction and preview generation
@@ -185,7 +201,7 @@ export default function RotatePdf() {
       const mockPages = Array.from({ length: 3 }, (_, i) => ({
         pageNumber: i + 1,
         rotation: 0,
-        image: null // In production, generate actual page previews
+        image: null as string | null // In production, generate actual page previews
       }));
       
       setFile(uploadedFile);
@@ -209,17 +225,18 @@ export default function RotatePdf() {
     }
   };
 
-  const rotatePage = (pageIndex, degrees) => {
+  const rotatePage = (pageIndex: number, degrees: number) => {
     setPages(prevPages => 
       prevPages.map((page, index) => 
         index === pageIndex 
-          ? { ...page, rotation: (page.rotation + degrees) % 360 }
+          ? { ...page, rotation: normalize(page.rotation + degrees) }
           : page
       )
     );
+    setHasRotations(true);
   };
 
-  const rotateSelected = (degrees) => {
+  const rotateSelected = (degrees: number) => {
     if (selectedPages.size === 0) {
       showToast('Please select pages to rotate', 'error');
       return;
@@ -228,21 +245,23 @@ export default function RotatePdf() {
     setPages(prevPages => 
       prevPages.map((page, index) => 
         selectedPages.has(index)
-          ? { ...page, rotation: (page.rotation + degrees) % 360 }
+          ? { ...page, rotation: normalize(page.rotation + degrees) }
           : page
       )
     );
     
+    setHasRotations(true);
     showToast(`Rotated ${selectedPages.size} page(s)`, 'success');
   };
 
-  const rotateAll = (degrees) => {
+  const rotateAll = (degrees: number) => {
     setPages(prevPages => 
       prevPages.map(page => ({
         ...page,
-        rotation: (page.rotation + degrees) % 360
+        rotation: normalize(page.rotation + degrees)
       }))
     );
+    setHasRotations(true);
     showToast(`Rotated all ${pages.length} pages`, 'success');
   };
 
@@ -255,7 +274,7 @@ export default function RotatePdf() {
     setSelectedPages(new Set());
   };
 
-  const togglePageSelection = (pageIndex) => {
+  const togglePageSelection = (pageIndex: number) => {
     setSelectedPages(prev => {
       const newSet = new Set(prev);
       if (newSet.has(pageIndex)) {
@@ -291,9 +310,10 @@ export default function RotatePdf() {
     setFile(null);
     setPages([]);
     setSelectedPages(new Set());
-    if (deleteTimer) {
-      clearTimeout(deleteTimer);
-      setDeleteTimer(null);
+    setHasRotations(false);
+    if (deleteTimerRef.current) {
+      clearTimeout(deleteTimerRef.current);
+      deleteTimerRef.current = null;
     }
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
@@ -476,7 +496,7 @@ export default function RotatePdf() {
                     onClick={selectAllPages}
                     className="flex items-center gap-1 px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500"
                   >
-                    <Grid3X3 className="w-4 h-4" />
+                    <LayoutGrid className="w-4 h-4" />
                     Select All
                   </button>
                   <button
@@ -501,160 +521,4 @@ export default function RotatePdf() {
                   </button>
                   <button
                     onClick={() => rotateSelected(90)}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <RotateCw className="w-4 h-4" />
-                    Rotate Selected 90° Right
-                  </button>
-                  <button
-                    onClick={() => rotateAll(-90)}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-green-500"
-                  >
-                    <RotateCcw className="w-4 h-4" />
-                    Rotate All Left
-                  </button>
-                  <button
-                    onClick={() => rotateAll(90)}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 rounded transition-colors focus:outline-none focus:ring-2 focus:ring-green-500"
-                  >
-                    <RotateCw className="w-4 h-4" />
-                    Rotate All Right
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Page previews grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {pages.map((page, index) => (
-                <PDFPagePreview
-                  key={index}
-                  pageImage={page.image}
-                  pageNumber={page.pageNumber}
-                  rotation={page.rotation}
-                  onRotate={(degrees) => rotatePage(index, degrees)}
-                  isSelected={selectedPages.has(index)}
-                  onSelect={() => togglePageSelection(index)}
-                />
-              ))}
-            </div>
-
-            {/* Sidebar ad space */}
-            <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center text-gray-500">
-              <span className="text-sm">Advertisement</span>
-              <div className="h-64 flex items-center justify-center">
-                300x250 Sidebar Ad Space
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* FAQ Section for SEO */}
-        <section className="mt-16 max-w-4xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
-            Frequently Asked Questions
-          </h2>
-          
-          <div className="space-y-6">
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">
-                How do I rotate PDF pages for free?
-              </h3>
-              <p className="text-gray-600">
-                Simply upload your PDF file, select the pages you want to rotate, and click the rotation buttons. 
-                You can rotate individual pages or all pages at once in 90-degree increments.
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">
-                Is it safe to upload my PDF files?
-              </h3>
-              <p className="text-gray-600">
-                Yes, your files are processed securely and automatically deleted after 1 hour. 
-                We don't store your files permanently or share them with third parties.
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">
-                Can I rotate multiple pages at once?
-              </h3>
-              <p className="text-gray-600">
-                Yes, you can select multiple pages using the checkboxes and rotate them all together, 
-                or use the "Rotate All" buttons to rotate your entire document.
-              </p>
-            </div>
-            
-            <div className="bg-white rounded-lg border border-gray-200 p-6">
-              <h3 className="font-semibold text-gray-900 mb-2">
-                What file size limits apply?
-              </h3>
-              <p className="text-gray-600">
-                You can rotate PDF files up to 100MB in size. For larger files, consider compressing 
-                your PDF first or splitting it into smaller parts.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Features section */}
-        <section className="mt-16 bg-white rounded-lg border border-gray-200 p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">
-            Why Choose PDfree.tools for PDF Rotation?
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="text-center">
-              <Shield className="w-8 h-8 text-green-500 mx-auto mb-3" />
-              <h3 className="font-semibold text-gray-900 mb-2">100% Secure</h3>
-              <p className="text-gray-600 text-sm">
-                Files are processed locally when possible and automatically deleted after 1 hour
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <CheckCircle className="w-8 h-8 text-blue-500 mx-auto mb-3" />
-              <h3 className="font-semibold text-gray-900 mb-2">No Registration</h3>
-              <p className="text-gray-600 text-sm">
-                Use all features without creating an account or providing your email address
-              </p>
-            </div>
-            
-            <div className="text-center">
-              <RefreshCw className="w-8 h-8 text-purple-500 mx-auto mb-3" />
-              <h3 className="font-semibold text-gray-900 mb-2">Unlimited Use</h3>
-              <p className="text-gray-600 text-sm">
-                Rotate as many PDF files as you need - no daily limits or restrictions
-              </p>
-            </div>
-          </div>
-        </section>
-      </main>
-
-      {/* Footer ad space */}
-      <div className="mt-16 mb-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center text-gray-500">
-          <span className="text-sm">Advertisement</span>
-          <div className="h-20 flex items-center justify-center">
-            728x90 Footer Banner Ad Space
-          </div>
-        </div>
-      </div>
-
-      {/* Loading overlay */}
-      {processing && (
-        <LoadingOverlay message="Processing your PDF..." />
-      )}
-
-      {/* Toast notification */}
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
-    </div>
-  );
-}
+                    className="flex items-center gap-2
